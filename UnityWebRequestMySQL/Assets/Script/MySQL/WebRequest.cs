@@ -9,13 +9,16 @@ public class WebRequest : MonoBehaviour
     void Start()
     {
         /* Test Hello World from PHP File*/
-        StartCoroutine(TestHelloWorld());
+        //StartCoroutine(TestHelloWorld());
 
         /* Test read user data from PHP file*/
-        StartCoroutine(GetUserInfo());
+        //StartCoroutine(GetUserInfo());
 
         /* Test Login User from PHP file with registered user*/
-        StartCoroutine(CheckUserLogin("Ebrahim", "123456"));
+        //StartCoroutine(CheckUserLogin("Ebrahim", "123456"));
+
+        /* Test Creating New User to MySQL Database*/
+        StartCoroutine(RegisterNewUser("Keyza", "123456"));
     }
 
     IEnumerator TestHelloWorld()
@@ -68,6 +71,28 @@ public class WebRequest : MonoBehaviour
         form.AddField("passwordPOST", password);
 
         using (UnityWebRequest www = UnityWebRequest.Post("https://shiplightsstudio.000webhostapp.com/UnityWebServiceMySQL/CheckUserLogin.php", form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                /* Show the result as text */
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
+    }
+
+    IEnumerator RegisterNewUser(string username, string password)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("usernamePOST", username);
+        form.AddField("passwordPOST", password);
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://shiplightsstudio.000webhostapp.com/UnityWebServiceMySQL/RegisterNewUser.php", form))
         {
             yield return www.SendWebRequest();
 
